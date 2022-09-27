@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<script type="module" src="./pres.js"></script>
+
+<!--
+- chmod +x vs php craft
+- Craft native CLI feature areas
+    - Useful deployment commands
+    - batch content: Resave command
+    - rescue: Create/admin users, disable plugins
+    - production: mailer/test becuse you can't access Settings
+    - Walk
+    - and more...
+- Make our own CLI tool
+    - Controllers: Request -> Response
+    - Plugins (auto namespace) vs Module (registering our own) vs Custom Map
+    - Exit codes
+    - Create a module
+    - Register the module
+    - Add a controller
+    - Add an Action method
+    - beforeAction/afterAction (output decoration, profiling)
+    - Arguments and flags
+    - Console output
+    - finishing touches: how to add descriptions (visible from ./craft help)
+    - my BaseConsoleController: notice(), error(), runAndExit()
+    - maxPowerCaptain();
+- Example use cases for plugin actions
+  - Running recurring orders
+- Example use cases for custom project actions
+  - Content clean-up (Change out Matrix block types)
+  - Duplicate dashboard widgets
+  - Replay event actions
+  - [expanded example] Import content (EE, JSON)
+  - [expanded example] Nuke dummy content during dev
+  - [expanded example] Module dev playground / testing service methods
+- Cron / Scheduling system actions
+-->
+
+<div class="reveal">
+    <div class="slides">
+
+        <!-- Title / ✅ -->
+        <section>
+            <p class="text-5xl font-mono">
+                ./craft command-line/magic
+            </p>
+            <hr class="w-1/6 mt-20 mx-auto">
+            <div class="flex flex-col mt-20 space-y-8 mx-auto items-center">
+                <img src="img/michael.jpg" class="block w-1/6 rounded-full" />
+                <p class="font-mono text-2xl">
+                    @michaelrog
+                </p>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Howdy / ✅ -->
+        <section>
+            <h1 class="uppercase text-9xl">
+                Howdy!
+            </h1>
+            <hr class="w-1/6 mt-20 mx-auto">
+            <p class="mt-20 font-mono text-2xl">
+                rog.io/craft-command-line-magic
+            </p>
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- TODO -->
+        <section>Top Shelf Craft</section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- TODO -->
+        <section>When I'm not coding...</section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Intro / ✅ -->
+        <section class="space-y-10 text-4xl">
+
+            <p>
+                Craft's native CLI tool
+            </p>
+            <p>
+                Building your own custom CLI commands
+            </p>
+            <p>
+                Use case examples
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Usage / ✅ -->
+        <section data-transition="concave">
+
+            <pre class="preWrapper / text-lg">
+<code data-trim data-noescape>
+php craft ...
+</code>
+            </pre>
+            <pre class="preWrapper / text-lg">
+<code data-trim data-noescape>
+chmod +x ./craft
+
+./craft ...
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Help / ✅ -->
+        <section data-transition="concave-in fade-out">
+
+            <pre class="preWrapper / text-lg">
+<code data-trim data-noescape>
+./craft help
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- TODO -->
+        <section data-transition="fade">
+            (the scroll)
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Native CLI feature areas / 🛠 -->
+        <section data-transition="zoom">
+
+            <div>
+                <div class="flex flex-wrap gap-6 space-x-12 justify-center items-center font-mono text-3xl text-gold">
+                    <p>cache</p>
+                    <p>clear-caches</p>
+                    <p>clear-deprecations</p>
+                    <p>db</p>
+                    <p>elements</p>
+                    <p>fixture</p>
+                    <p>gc</p>
+                    <p>graphql</p>
+                    <p>help</p>
+                    <p>index-assets</p>
+                    <p>install</p>
+                    <p>invalidate-tags</p>
+                    <p>mailer</p>
+                    <p>migrate</p>
+                    <p>off</p>
+                    <p>on</p>
+                    <p>plugin</p>
+                    <p>project-config</p>
+                    <p>queue</p>
+                    <p>resave</p>
+                    <p>serve</p>
+                    <p>setup</p>
+                    <p>tests</p>
+                    <p>up</p>
+                    <p>update</p>
+                    <p>users</p>
+                    <p>utils</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Deployment 1 / ✅ -->
+        <section data-transition="fade">
+
+            <div class="min-h-screen">
+
+                <h1 class="fragment / uppercase py-6">
+                    Deployment
+                </h1>
+
+                <div class="text-gold font-mono space-y-10">
+                    <p class="fragment">
+                        ./craft migrate/all
+                        <span class="fragment / text-base">
+                            --track=my-custom-track
+                        </span>
+                    </p>
+                    <p class="fragment">
+                        ./craft project-config/apply
+                    </p>
+                    <p class="fragment">
+                        ./craft up
+                        <span class="fragment / text-base">
+                        --force
+                    </span>
+                    </p>
+                    <p class="fragment">
+                        ./craft clear-caches/all
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Deployment 2 / ✅ -->
+        <section data-transition="none-in fade-out">
+
+            <div class="min-h-screen">
+
+                <h1 class="uppercase py-6">
+                    Deployment
+                </h1>
+
+                <div class="space-y-8">
+
+                    <p class="fragment / text-gold font-mono">
+                        ./craft install/check
+                    </p>
+
+                    <pre class="fragment / preWrapper / text-sm">
+<code data-trim data-noescape>
+./craft install/check && ./craft up || exit 0
+</code>
+                    </pre>
+
+                    <pre class="fragment / preWrapper / text-sm">
+<code data-trim data-noescape data-line-numbers="2-7">
+"scripts": {
+    "craft-update": [
+        "@php craft install/check && php craft migrate/all --interactive=0 || exit 0",
+        "@php craft install/check && php craft project-config/apply --force --interactive=0 || exit 0",
+        "@php craft install/check && php craft clear-caches/all --interactive=0 || exit 0"
+    ],
+    "post-update-cmd": "@craft-update",
+    "post-install-cmd": "@craft-update"
+}
+</code>
+                    </pre>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Rescue / ✅ -->
+        <section data-transition="fade">
+
+            <div class="min-h-screen">
+
+                <h1 class="uppercase py-6">
+                    Rescue
+                </h1>
+
+                <div class="text-gold font-mono space-y-10">
+                    <p class="fragment">
+                        ./craft users/set-password
+                    </p>
+                    <p class="fragment">
+                        ./craft users/create
+                        <span class="fragment / text-base">
+                        --email
+                    </span>
+                        <span class="fragment / text-base">
+                        --password
+                    </span>
+                        <span class="fragment / text-base">
+                        --admin
+                    </span>
+                    </p>
+                    <p class="fragment">
+                        ./craft plugin/list
+                    </p>
+                    <p class="fragment">
+                        ./craft plugin/disable
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Dev / ✅ -->
+        <section data-transition="fade">
+
+            <div class="min-h-screen">
+
+                <h1 class="uppercase py-6">
+                    Development
+                </h1>
+
+                <div class="text-gold font-mono space-y-10">
+                    <p class="fragment">
+                        ./craft users/set-password
+                    </p>
+                    <p class="fragment">
+                        ./craft users/create
+                        <span class="fragment / text-base">
+                            --email
+                        </span>
+                        <span class="fragment / text-base">
+                            --password
+                        </span>
+                            <span class="fragment / text-base">
+                            --admin
+                        </span>
+                    </p>
+                    <p class="fragment">
+                        ./craft plugin/list
+                    </p>
+                    <p class="fragment">
+                        ./craft plugin/disable seomatic
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Dev 2 / ✅ -->
+        <section data-transition="fade">
+
+            <div class="min-h-screen">
+
+                <h1 class="uppercase py-6">
+                    Development
+                </h1>
+
+                <div class="fragment / text-gold font-mono space-y-10">
+                    <p>
+                        ./craft resave/entries
+                        <span class="fragment">
+                            --set=myField
+                        </span>
+                        <span class="fragment">
+                            --if-empty
+                        </span>
+                        <span class="fragment">
+                            --to <span class="text-slate-400">...</span>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="fragment / flex flex-wrap justify-center items-center mx-auto text-center leading-none">
+                    <p class="mx-16 my-3">
+                        <span class="text-base text-slate-400">...an attribute name:</span>
+                        <code class="block text-gold text-xl">--to myCustomField</code>
+                    </p>
+                    <p class="mx-16 my-3">
+                        <span class="text-base text-slate-400">...an object template:</span>
+                        <code class="block text-gold text-xl">--to "={myCustomField|lower}"</code>
+                    </p>
+                    <p class="mx-16 my-3">
+                        <span class="text-base text-slate-400">...a raw value:</span>
+                        <code class="block text-gold text-xl">--to "=42"</code>
+                    </p>
+                    <p class="mx-16 my-3">
+                        <span class="text-base text-slate-400">...an empty value:</span>
+                        <code class="block text-gold text-xl">--to :empty:</code>
+                    </p>
+                    <p class="mx-16 my-3">
+                        <span class="text-base text-slate-400">...a PHP arrow function:</span>
+                        <code class="block text-gold text-xl">--to "fn(\$element) => \$element->callSomething()"</code>
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Production / ✅ -->
+        <section data-transition="fade">
+
+            <div class="min-h-screen">
+
+                <h1 class="uppercase py-6">
+                    Production
+                </h1>
+
+                <div class="text-gold font-mono space-y-10">
+                    <p>
+                        ./craft mailer/test
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- rtfm / ✅ -->
+        <section data-transition="fade">
+
+            <p class="text-xl text-slate-600 font-mono">
+                // and more ...
+            </p>
+            <p>
+                craftcms.com/docs/4.x/console-commands.html
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- waypoint / ✅ -->
+        <section class="space-y-10 text-4xl">
+
+            <p class="text-slate-500">
+                <span class="line-through">Craft's native CLI tool</span>
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+            <p>
+                Building your own custom CLI commands
+            </p>
+            <p>
+                Use case examples
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Make your own, key concepts / ✅ -->
+        <section>
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // Key concepts
+            </p>
+            <p>
+                controllers: Request &rarr; Response
+            </p>
+            <p>
+                routing: namespaces, controller maps
+            </p>
+            <p>
+                plugin vs module
+            </p>
+            <p>
+                actions, arguments, options
+            </p>
+            <p>
+                output, exit codes
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Controllers / ✅ -->
+        <section>
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // controller > action
+            </p>
+
+            <div class="preWrapper">
+            <pre class="text-sm">
+<code data-trim data-noescape data-line-numbers="1|3|5|1,3,5">
+class MagicController extends craft\console\Controller
+{
+	public function actionAbracadabra($foo, $bar): int
+	{
+        return ExitCode::OK;
+    }
+}
+</code>
+            </pre>
+            </div>
+
+            <div class="mt-8 preWrapper">
+            <pre class="">
+<code data-trim data-noescape>
+./craft dot-all/magic/abracadabra myFoo myBar
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Plugins / ✅ -->
+        <section>
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // routing, for plugins
+            </p>
+
+            <div class="preWrapper">
+            <pre class="leading-loose">
+<code data-trim data-noescape>
+DotAllPlugin.php
+console /
+    &rdsh; controllers /
+        &rdsh; MagicController.php
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Modules / ✅ -->
+        <section data-transition="slide-in fade-out">
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // routing, for modules
+            </p>
+
+            <pre class="preWrapper / leading-loose">
+<code data-trim data-noescape>
+DotAllModule.php
+controllers /
+    &rdsh; console /
+        &rdsh; MagicController.php
+    &rdsh; web /
+        &rdsh; SomeWebController.php
+</code>
+                </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Modules... module class / ✅ -->
+        <section data-transition="fade-in">
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // DotAllModule.php
+            </p>
+
+            <div class="preWrapper">
+                <pre class="leading-loose text-base">
+<code data-trim data-noescape data-line-numbers="|2|4|6|8|">
+&lt;?php
+namespace modules\dotall;
+
+class DotAllModule extends yii\base\Module
+{
+    public function init()
+    {
+        Craft::setAlias('@modules/dotall', __DIR__);
+    }
+}
+</code>
+                </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Modules... register module / ✅ -->
+        <section data-transition="fade-in">
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // app.php
+            </p>
+
+            <div class="preWrapper">
+                <pre class="leading-loose text-base">
+<code data-trim data-noescape data-line-numbers="|1|2,12|4-6|8-10|">
+&lt;?php
+return [
+
+	'modules' => [
+		'dotall' => \modules\dotall\DotAllModule::class,
+	],
+
+	'bootstrap' => [
+		'dotall',
+	],
+
+];
+</code>
+                </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Modules... namespace bit / ✅ -->
+        <section data-transition="fade-in">
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // DotAllModule.php
+            </p>
+
+            <div class="preWrapper">
+                <pre class="leading-loose text-base">
+<code data-trim data-noescape data-line-numbers="2-8|5-7">
+...
+public function init()
+{
+    Craft::setAlias('@modules/dotall', __DIR__);
+    if (Craft::$app instanceof craft\console\Application) {
+      $this->controllerNamespace = 'modules\\dotall\\controllers\\console';
+    }
+}
+...
+</code>
+                </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Routing: Modules, revisited / ✅ -->
+        <section data-transition="slide-in fade-out">
+
+            <p class="mb-8 text-2xl text-slate-500 font-mono">
+                // routing, for modules
+            </p>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+$this->controllerNamespace = 'modules\\dotall\\controllers\\console';
+</code>
+            </pre>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+DotAllModule.php
+controllers /
+    &rdsh; console /
+        &rdsh; MagicController.php
+        &rdsh; FooController.php
+    &rdsh; web /
+        &rdsh; SomeWebController.php
+</code>
+            </pre>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+./craft dot-all/magic/...
+./craft dot-all/foo/...
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Action -->
+        <section data-transition="fade-out">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="">
+use craft\console\Controller;
+use yii\console\ExitCode;
+
+class MagicController extends Controller
+{
+	public function actionAbracadabra($foo, $bar): int
+	{
+        return ExitCode::OK;
+    }
+}
+</code>
+            </pre>
+            </div>
+
+            <div class="mt-8 preWrapper">
+            <pre class="">
+<code data-trim data-noescape>
+./craft dot-all/magic/abracadabra myFoo myBar
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Options -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm">
+<code data-trim data-noescape data-line-numbers="">
+class MagicController extends Controller
+{
+
+    public $foo;
+
+    public function options($actionID)
+    {
+        return ['foo'];
+    }
+
+    public function actionAbracadabra(): int
+    {
+        return ExitCode::OK;
+    }
+
+}
+</code>
+            </pre>
+            </div>
+
+            <div class="mt-8 preWrapper">
+            <pre class="">
+<code data-trim data-noescape>
+./craft dot-all/magic/abracadabra --foo=bar
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- before/after -->
+        <section data-transition="cade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|4-7|9-12">
+class MagicController extends Controller
+{
+
+    public function beforeAction($action)
+    {
+        return parent::beforeAction($action);
+    }
+
+    public function afterAction($action)
+    {
+        return parent::afterAction($action);
+    }
+
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Help -->
+        <section data-transition="cade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|4-6">
+class MagicController extends Controller
+{
+
+    /*
+     * Does magic with the command line!
+     */
+    public function actionAbracadabra($foo, $bar): int
+    {
+        return ExitCode::OK;
+    }
+
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Action with Interactivity! -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|4|6|6-7|10|10-11">
+public function actionAbracadabra(): int
+{
+
+    if ($this->prompt("Say the magic word...") === 'abracadabra')
+    {
+        $this->stdout("You did it!");
+        return ExitCode::OK;
+    }
+
+    $this->stderr("That didn't work.");
+    return ExitCode::UNSPECIFIED_ERROR;
+
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Action with Max Power! -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|1,7">
+use craft\helpers\App;
+
+    ...
+
+public function actionAbracadabra(): int
+{
+    App::maxPowerCaptian()
+    // ...
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- My BaseController writeLine / ✅ -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|7-10">
+abstract class BaseConsoleController extends Controller
+{
+
+    /**
+     * Writes a line to the console
+     */
+    protected function _writeLine($msg = null)
+    {
+        $this->stdout(print_r($msg, true) . PHP_EOL);
+    }
+
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- My BaseController writeError -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|7-11">
+abstract class BaseConsoleController extends Controller
+{
+
+    /**
+     * Writes an error to the console
+     */
+    protected function _writeError($msg)
+    {
+        $this->stderr('Error: ', Console::BOLD, Console::FG_RED);
+        $this->stderr(print_r($msg, true) . PHP_EOL);
+    }
+
+}
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- My BaseController runAndExit / ✅ -->
+        <section data-transition="fade">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="|3-6|7-10|">
+protected function runAndExit(callable $function): int
+{
+    try {
+        $function();
+        return ExitCode::OK;
+    }
+    catch (\Exception $e) {
+        $this->_writeErr($e->getMessage());
+        return ExitCode::UNSPECIFIED_ERROR;
+    }
+}
+</code>
+            </pre>
+            </div>
+
+            <div class="mt-2 preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape>
+return $this->runAndExit(function() {
+    // Do magic...
+});
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Action, revisited / ✅ -->
+        <section data-transition="fade-out">
+
+            <div class="preWrapper">
+            <pre class="text-sm leading-loose">
+<code data-trim data-noescape data-line-numbers="">
+use craft\console\Controller;
+use yii\console\ExitCode;
+
+class MagicController extends Controller
+{
+	public function actionAbracadabra($foo, $bar): int
+	{
+        return ExitCode::OK;
+    }
+}
+</code>
+            </pre>
+            </div>
+
+            <div class="mt-8 preWrapper">
+            <pre class="">
+<code data-trim data-noescape>
+./craft dot-all/magic/abracadabra myFoo myBar
+</code>
+            </pre>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- waypoint / ✅ -->
+        <section class="space-y-10 text-4xl">
+
+            <p class="text-slate-500">
+                <span class="line-through">Craft's native CLI tool</span>
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+            <p class="text-slate-500">
+                <span class="line-through">Building your own custom CLI commands</span>
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+            <p>
+                Use case examples
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Plugin use cases / ✅ -->
+        <section>
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // Plugin use cases
+            </p>
+            <div class="flex justify-start items-center">
+                <p class="w-1/4 flex-0 text-right pr-12 uppercase text-lg text-gold">
+                    Walk
+                </p>
+                <p class="w-3/4 flex-0 text-left grow">
+                    easy CLI tools for processing or counting elements
+                </p>
+            </div>
+            <div class="flex justify-start items-center">
+                <p class="w-1/4 flex-0 text-right pr-12 uppercase text-lg text-gold">
+                    Recurring Orders
+                </p>
+                <p class="w-3/4 flex-0 text-left grow">
+                    process subscription renewals nightly on cron
+                </p>
+            </div>
+            <div class="flex justify-start items-center">
+                <p class="w-1/4 flex-0 text-right pr-12 uppercase text-lg text-gold">
+                    Campaigns
+                </p>
+                <p class="w-3/4 flex-0 text-left grow">
+                    send scheduled emails
+                </p>
+            </div>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Project use cases / ✅ -->
+        <section>
+
+            <p class="mb-16 text-2xl text-slate-500 font-mono">
+                // Project use cases
+            </p>
+            <p>
+                Content clean-up
+            </p>
+            <p>
+                Duplicate dashboard widgets
+            </p>
+            <p>
+                Replay event actions
+            </p>
+            <p>
+                Import content (EE, JSON, ...)
+            </p>
+            <p>
+                Purge test content during dev
+            </p>
+            <p>
+                Module dev playground / testing service methods
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- use case / TODO -->
+        <section>
+
+            <p class="mb-8 text-2xl text-slate-500 font-mono">
+                // import content
+            </p>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- use case / TODO -->
+        <section>
+
+            <p class="mb-8 text-2xl text-slate-500 font-mono">
+                // purge dev content
+            </p>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- use case / TODO -->
+        <section>
+
+            <p class="mb-8 text-2xl text-slate-500 font-mono">
+                // play with stuff
+            </p>
+
+            <pre class="preWrapper / leading-loose text-sm">
+<code data-trim data-noescape>
+
+</code>
+            </pre>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- waypoint / ✅ -->
+        <section class="space-y-10 text-4xl">
+
+            <p>
+                Craft's native CLI tool
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+            <p>
+                Building your own custom CLI commands
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+            <p>
+                Use case examples
+                <span class="ml-2 font-bold text-green">&checkmark;</span>
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- links / ✅ -->
+        <section>
+
+            <p class="text-xl text-slate-600 font-mono">
+                // instruction &amp; inspiration
+            </p>
+            <p class="text-2xl">
+                craftcms.com/docs/4.x/console-commands.html
+            </p>
+            <p class="text-2xl">
+                craftcms.com/docs/4.x/extend/commands.html
+            </p>
+            <p class="text-2xl">
+                yiiframework.com/doc/guide/2.0/en/tutorial-console
+            </p>
+            <p class="text-2xl">
+                github.com/TopShelfCraft/Walk
+            </p>
+
+        </section>
+
+        <!-- ------------------------------------------------------ -->
+
+        <!-- Howdy / ✅ -->
+        <section>
+            <h1 class="uppercase text-9xl">
+                Thanks, yall!
+            </h1>
+            <p class="font-mono text-warm-500 text-xl">
+                // Go make magic!
+            </p>
+            <hr class="w-1/6 mt-20 mx-auto">
+            <p class="mt-20 font-mono text-2xl">
+                rog.io/craft-command-line-magic
+            </p>
+        </section>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+
+  node:
+    image: node:18-alpine
+    ports:
+      - "3000:3000" # Vite
+      - "8000:8000" # reveal.js server
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: npm run dev

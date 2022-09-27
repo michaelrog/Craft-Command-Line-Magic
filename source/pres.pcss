@@ -1,0 +1,51 @@
+/*.unset {*/
+/*	--r-main-font: unset;*/
+/*	--r-main-font-size: unset;*/
+/*	--r-block-margin: unset;*/
+/*	--r-heading-margin: unset;*/
+/*	--r-heading-font: unset;*/
+/*	--r-heading-color: unset;*/
+/*	!*--r-heading-line-height: unset;*!*/
+/*	!*--r-heading-letter-spacing: unset;*!*/
+/*	--r-heading-text-transform: unset;*/
+/*	--r-heading-text-shadow: unset;*/
+/*	--r-heading-font-weight: unset;*/
+/*	--r-heading1-text-shadow: unset;*/
+/*	--r-heading1-size: unset;*/
+/*	--r-heading2-size: unset;*/
+/*	--r-heading3-size: unset;*/
+/*	--r-heading4-size: unset;*/
+/*	!*--r-code-font: initial;*!*/
+/*	--r-link-color: unset;*/
+/*	--r-link-color-dark: unset;*/
+/*	--r-link-color-hover: unset;*/
+/*	--r-selection-background-color: unset;*/
+/*	--r-selection-color: unset;*/
+/*}*/
+
+section {
+	@apply tracking-wide;
+}
+
+.fullh {
+	@apply min-h-screen;
+}
+
+.preWrapper {
+	@apply p-8 bg-stone-800;
+}
+.preWrapper .code-wrapper {
+	@apply m-0 shadow-none;
+}
+
+.reveal .hljs.has-highlights tr:not(.highlight-line) {
+	opacity: 1 !important;
+	@apply text-stone-500;
+}
+
+.hljs-ln-numbers {
+	opacity: .1 !important;
+}
+
+@tailwind base;
+@tailwind utilities;
