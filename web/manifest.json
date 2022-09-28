@@ -1,0 +1,48 @@
+{
+  "index-legacy.html": {
+    "file": "assets/index-legacy.eb7f6ed0.js",
+    "src": "index-legacy.html",
+    "isEntry": true,
+    "assets": [
+      "assets/source-sans-pro-regular.dce8869d.eot",
+      "assets/source-sans-pro-regular.d4eaa48b.woff",
+      "assets/source-sans-pro-regular.c1865d89.ttf",
+      "assets/source-sans-pro-italic.ad4b0799.eot",
+      "assets/source-sans-pro-italic.05d3615f.woff",
+      "assets/source-sans-pro-italic.d13268af.ttf",
+      "assets/source-sans-pro-semibold.ebb8918d.eot",
+      "assets/source-sans-pro-semibold.b0abd273.woff",
+      "assets/source-sans-pro-semibold.a53e2723.ttf",
+      "assets/source-sans-pro-semibolditalic.dfe0b47a.eot",
+      "assets/source-sans-pro-semibolditalic.7225cacc.woff",
+      "assets/source-sans-pro-semibolditalic.e8ec22b6.ttf"
+    ]
+  },
+  "../vite/legacy-polyfills": {
+    "file": "assets/polyfills-legacy.1d8d71c3.js",
+    "src": "../vite/legacy-polyfills",
+    "isEntry": true
+  },
+  "index.html": {
+    "file": "assets/index.b93abc6d.js",
+    "src": "index.html",
+    "isEntry": true,
+    "css": [
+      "assets/index.95e2292d.css"
+    ],
+    "assets": [
+      "assets/source-sans-pro-regular.dce8869d.eot",
+      "assets/source-sans-pro-regular.d4eaa48b.woff",
+      "assets/source-sans-pro-regular.c1865d89.ttf",
+      "assets/source-sans-pro-italic.ad4b0799.eot",
+      "assets/source-sans-pro-italic.05d3615f.woff",
+      "assets/source-sans-pro-italic.d13268af.ttf",
+      "assets/source-sans-pro-semibold.ebb8918d.eot",
+      "assets/source-sans-pro-semibold.b0abd273.woff",
+      "assets/source-sans-pro-semibold.a53e2723.ttf",
+      "assets/source-sans-pro-semibolditalic.dfe0b47a.eot",
+      "assets/source-sans-pro-semibolditalic.7225cacc.woff",
+      "assets/source-sans-pro-semibolditalic.e8ec22b6.ttf"
+    ]
+  }
+}

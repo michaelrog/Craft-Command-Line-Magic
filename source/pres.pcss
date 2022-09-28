@@ -23,6 +23,10 @@
 /*	--r-selection-color: unset;*/
 /*}*/
 
+:root {
+	--r-link-color: theme('colors.gold');
+}
+
 section {
 	@apply tracking-wide;
 }
@@ -45,6 +49,10 @@ section {
 
 .hljs-ln-numbers {
 	opacity: .1 !important;
+}
+
+.reveal pre code {
+	max-height: none;
 }
 
 @tailwind base;

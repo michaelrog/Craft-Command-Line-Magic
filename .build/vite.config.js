@@ -11,9 +11,6 @@ export default ({ command, mode }) => ({
 		manifest: true,
 		outDir: '../web', // (relative to `root`)
 		rollupOptions: {
-			input: {
-				site: 'index.html',
-			},
 			output: {
 				sourcemap: true
 			},
@@ -33,11 +30,6 @@ export default ({ command, mode }) => ({
 		}),
 	],
 	publicDir: 'static',
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, '../src'),
-		},
-	},
 	server: {
 		host: '0.0.0.0', // Vite server should listen on all IPs.
 		port: 3000, // Use port 3000 for dev server.
